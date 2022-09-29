@@ -8,6 +8,7 @@ const LoginLink = styled.Text`
   color: #0095f6;
   font-weight: 600;
   margin-top: 20px;
+  text-align: center;
 `;
 
 const Welcome = ({ navigation }: any) => {

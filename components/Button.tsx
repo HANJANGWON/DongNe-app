@@ -1,10 +1,12 @@
 import React from "react";
+import { ActivityIndicator } from "react-native";
 import styled from "styled-components/native";
 
 interface ButtonProps {
   onPress: () => void;
   text: string;
   disalbed: boolean;
+  loading?: any;
 }
 
 const Button = styled.TouchableOpacity`
@@ -21,10 +23,14 @@ const ButtonText = styled.Text`
   text-align: center;
 `;
 
-const AuthButton = ({ onPress, disalbed, text }: ButtonProps) => {
+const AuthButton = ({ onPress, disalbed, text, loading }: ButtonProps) => {
   return (
     <Button disabled={disalbed} onPress={onPress}>
-      <ButtonText>{text}</ButtonText>
+      {loading ? (
+        <ActivityIndicator color="white" />
+      ) : (
+        <ButtonText>{text}</ButtonText>
+      )}
     </Button>
   );
 };

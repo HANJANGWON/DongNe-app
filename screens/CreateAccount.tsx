@@ -1,4 +1,5 @@
-import React, { RefObject, useRef } from "react";
+import React, { RefObject, useEffect, useRef } from "react";
+import { useForm } from "react-hook-form";
 import { KeyboardAvoidingView, Platform, TextInput } from "react-native";
 import styled from "styled-components/native";
 import AuthLayout from "../components/AuthLayout";
@@ -6,15 +7,31 @@ import AuthButton from "../components/Button";
 import { Input } from "../components/shared";
 
 const CreateAccount = () => {
+  const { register, handleSubmit, setValue } = useForm();
   const fullNameRef = useRef<TextInput | null>(null);
   const emailRef = useRef<TextInput | null>(null);
   const passwordRef = useRef<TextInput | null>(null);
   const onNext = (nextOne: RefObject<TextInput | null>) => {
     nextOne?.current?.focus();
   };
-  const onDone = () => {
-    alert("done!");
+  const onValid = (data: any) => {
+    console.log(data);
   };
+
+  useEffect(() => {
+    register("username", {
+      required: true,
+    });
+    register("fullName", {
+      required: true,
+    });
+    register("email", {
+      required: true,
+    });
+    register("password", {
+      required: true,
+    });
+  }, [register]);
   return (
     <AuthLayout>
       <Input
@@ -22,6 +39,7 @@ const CreateAccount = () => {
         placeholderTextColor="gray"
         returnKeyType="next"
         onSubmitEditing={() => onNext(fullNameRef)}
+        onChangeText={(text: any) => setValue("username", text)}
       />
       <Input
         ref={fullNameRef}
@@ -29,6 +47,7 @@ const CreateAccount = () => {
         placeholderTextColor="gray"
         returnKeyType="next"
         onSubmitEditing={() => onNext(emailRef)}
+        onChangeText={(text: any) => setValue("fullName", text)}
       />
 
       <Input
@@ -38,6 +57,7 @@ const CreateAccount = () => {
         placeholderTextColor="gray"
         returnKeyType="next"
         onSubmitEditing={() => onNext(passwordRef)}
+        onChangeText={(text: any) => setValue("email", text)}
       />
       <Input
         ref={passwordRef}
@@ -45,10 +65,15 @@ const CreateAccount = () => {
         placeholderTextColor="gray"
         secureTextEntry
         returnKeyType="done"
-        onSubmitEditing={onDone}
+        onSubmitEditing={handleSubmit(onValid)}
         lastOne={true}
+        onChangeText={(text: any) => setValue("password", text)}
       />
-      <AuthButton text="회원가입" disalbed={true} onPress={() => null} />
+      <AuthButton
+        text="회원가입"
+        disalbed={false}
+        onPress={handleSubmit(onValid)}
+      />
     </AuthLayout>
   );
 };
