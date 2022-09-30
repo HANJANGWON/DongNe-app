@@ -2,7 +2,7 @@ import { gql, useMutation } from "@apollo/client";
 import React, { RefObject, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
-import { isLoggedInVar } from "../apollo";
+import { isLoggedInVar, logUserIn } from "../apollo";
 import AuthLayout from "../components/AuthLayout";
 import AuthButton from "../components/Button";
 import { Input } from "../components/shared";
@@ -17,15 +17,20 @@ const LOGIN_MUTATION = gql`
   }
 `;
 
-const Login = () => {
-  const { register, handleSubmit, setValue, watch } = useForm();
+const Login = ({ route: { params } }: any) => {
+  const { register, handleSubmit, setValue, watch } = useForm({
+    defaultValues: {
+      password: params?.password,
+      username: params?.username,
+    },
+  });
   const passwordRef = useRef<TextInput | null>(null);
-  const onCompleted = (data: any) => {
+  const onCompleted = async (data: any) => {
     const {
       login: { ok, token },
     } = data;
     if (ok) {
-      isLoggedInVar(true);
+      await logUserIn(token);
     }
   };
   const [logInMutation, { loading }] = useMutation(LOGIN_MUTATION, {
@@ -54,6 +59,7 @@ const Login = () => {
   return (
     <AuthLayout>
       <Input
+        value={watch("username")}
         placeholder="아이디"
         placeholderTextColor="gray"
         returnKeyType="next"
@@ -61,6 +67,7 @@ const Login = () => {
         onChangeText={(text: any) => setValue("username", text)}
       />
       <Input
+        value={watch("password")}
         ref={passwordRef}
         placeholder="비밀번호"
         placeholderTextColor="gray"
