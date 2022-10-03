@@ -1,7 +1,7 @@
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 
-const Feed = ({ navigation }: any) => {
+const Search = ({ navigation }: any) => {
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
       <TouchableOpacity onPress={() => navigation.navigate("Photo")}>
@@ -11,4 +11,4 @@ const Feed = ({ navigation }: any) => {
   );
 };
 
-export default Feed;
+export default Search;
