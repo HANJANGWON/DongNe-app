@@ -1,5 +1,6 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
+import { Image } from "react-native";
 import Feed from "../screens/Feed";
 import Me from "../screens/Me";
 import Notifications from "../screens/Notifications";
@@ -18,7 +19,21 @@ const StackNavFactory = ({ screenName }: any) => {
       }}
     >
       {screenName === "Feed" ? (
-        <Stack.Screen name={"Feed"} component={Feed} />
+        <Stack.Screen
+          name={"Feed"}
+          component={Feed}
+          options={{
+            headerTitle: () => (
+              <Image
+                style={{
+                  maxHeight: 35,
+                }}
+                resizeMode="contain"
+                source={require("../assets/logo.png")}
+              />
+            ),
+          }}
+        />
       ) : null}
       {screenName === "Search" ? (
         <Stack.Screen name={"Search"} component={Search} />

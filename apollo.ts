@@ -1,20 +1,44 @@
-import { ApolloClient, InMemoryCache, makeVar } from "@apollo/client";
+import {
+  ApolloClient,
+  createHttpLink,
+  InMemoryCache,
+  makeVar,
+} from "@apollo/client";
+import { setContext } from "@apollo/client/link/context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const isLoggedInVar = makeVar(false);
 export const tokenVar = makeVar("");
 
+const TOKEN = "token";
+
 export const logUserIn = async (token: any) => {
-  await AsyncStorage.multiSet([
-    ["token", token],
-    ["loggedIn", "yes"],
-  ]);
+  await AsyncStorage.setItem(TOKEN, token);
   isLoggedInVar(true);
   tokenVar(token);
 };
 
+export const logUserOut = async () => {
+  await AsyncStorage.removeItem(TOKEN);
+  isLoggedInVar(false);
+  tokenVar("");
+};
+
+const httpLink = createHttpLink({
+  uri: "https://free-coins-like-211-248-105-54.loca.lt/graphql",
+});
+
+const authLink = setContext((_, { headers }) => {
+  return {
+    headers: {
+      ...headers,
+      token: tokenVar(),
+    },
+  };
+});
+
 const client = new ApolloClient({
-  uri: "https://dark-meals-fail-211-248-105-54.loca.lt/graphql",
+  link: authLink.concat(httpLink),
   cache: new InMemoryCache(),
 });
 
