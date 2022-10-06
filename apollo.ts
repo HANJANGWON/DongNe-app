@@ -25,7 +25,7 @@ export const logUserOut = async () => {
 };
 
 const httpLink = createHttpLink({
-  uri: "https://free-coins-like-211-248-105-54.loca.lt/graphql",
+  uri: "https://wide-numbers-sneeze-211-248-105-54.loca.lt/graphql",
 });
 
 const authLink = setContext((_, { headers }) => {
