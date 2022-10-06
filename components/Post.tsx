@@ -39,7 +39,7 @@ const Header = styled.TouchableOpacity`
   align-items: center;
 `;
 const UserAvatar = styled.Image`
-  margin-right: 10;
+  margin-right: 10px;
   width: 25px;
   height: 25px;
   border-radius: 50%;
