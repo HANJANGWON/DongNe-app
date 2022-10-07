@@ -14,13 +14,14 @@ export type StackNavFactoryParamList = {
   Me: undefined;
   Profile: undefined;
   Photo: undefined;
-  Likes: undefined;
+  Likes: undefined | object;
   Comments: undefined;
 };
 
 interface PostProps {
   id: number;
   user: {
+    id: number;
     avatar?: string;
     username: string;
     fullName: string;
@@ -82,10 +83,7 @@ const ExtraContainer = styled.View`
 `;
 
 const Post = ({ id, user, caption, file, isLiked, likes }: PostProps) => {
-  const navigation: NativeStackNavigationProp<
-    StackNavFactoryParamList,
-    "Feed"
-  > = useNavigation();
+  const navigation: NativeStackNavigationProp<any> = useNavigation();
   const { width, height } = useWindowDimensions();
   const [imageHeight, setImageHeight] = useState(height - 450);
   useEffect(() => {
@@ -123,9 +121,15 @@ const Post = ({ id, user, caption, file, isLiked, likes }: PostProps) => {
     },
     update: updateToggleLike,
   });
+  const goToProfile = () => {
+    navigation.navigate("Profile", {
+      username: user.username,
+      id: user.id,
+    });
+  };
   return (
     <Container>
-      <Header onPress={() => navigation.navigate("Profile")}>
+      <Header onPress={goToProfile}>
         <UserAvatar resizeMode="cover" source={{ uri: user.avatar }} />
         <Username>{user.username}</Username>
       </Header>
@@ -153,7 +157,13 @@ const Post = ({ id, user, caption, file, isLiked, likes }: PostProps) => {
             <Ionicons name="chatbubble-outline" size={22} />
           </Action>
         </Actions>
-        <TouchableOpacity onPress={() => navigation.navigate("Likes")}>
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate("Likes", {
+              postId: id,
+            })
+          }
+        >
           <Likes>{`좋아요 ${likes}개`}</Likes>
         </TouchableOpacity>
       </ExtraContainer>

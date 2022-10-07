@@ -33,6 +33,7 @@ export default function App() {
       cache,
       storage: new AsyncStorageWrapper(AsyncStorage),
     });
+
     return preloadAssets();
   };
   if (loading) {
