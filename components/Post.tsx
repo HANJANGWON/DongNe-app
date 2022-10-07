@@ -5,6 +5,7 @@ import { Image, TouchableOpacity, useWindowDimensions } from "react-native";
 import styled from "styled-components/native";
 import { Comment } from "../generated/graphql";
 import { Ionicons } from "@expo/vector-icons";
+import { gql, useMutation } from "@apollo/client";
 
 export type StackNavFactoryParamList = {
   Feed: undefined;
@@ -31,6 +32,15 @@ interface PostProps {
   commentsNumber: number;
   comments: Comment[];
 }
+
+const TOGGLE_LIKE_MUTATION = gql`
+  mutation toggleLike($id: Int!) {
+    toggleLike(id: $id) {
+      ok
+      error
+    }
+  }
+`;
 
 const Container = styled.View``;
 const Header = styled.TouchableOpacity`
@@ -83,6 +93,36 @@ const Post = ({ id, user, caption, file, isLiked, likes }: PostProps) => {
       setImageHeight(height / 2);
     });
   }, [file]);
+  const updateToggleLike = (cache: any, result: any) => {
+    const {
+      data: {
+        toggleLike: { ok },
+      },
+    } = result;
+    if (ok) {
+      const postId = `Post:${id}`;
+      cache.modify({
+        id: postId,
+        fields: {
+          isLiked(prev: any) {
+            return !prev;
+          },
+          likes(prev: any) {
+            if (isLiked) {
+              return prev - 1;
+            }
+            return prev + 1;
+          },
+        },
+      });
+    }
+  };
+  const [toggleLikeMutation] = useMutation(TOGGLE_LIKE_MUTATION, {
+    variables: {
+      id,
+    },
+    update: updateToggleLike,
+  });
   return (
     <Container>
       <Header onPress={() => navigation.navigate("Profile")}>
@@ -102,7 +142,7 @@ const Post = ({ id, user, caption, file, isLiked, likes }: PostProps) => {
       />
       <ExtraContainer>
         <Actions>
-          <Action>
+          <Action onPress={toggleLikeMutation}>
             <Ionicons
               name={isLiked ? "heart" : "heart-outline"}
               color={isLiked ? "tomato" : "black"}
