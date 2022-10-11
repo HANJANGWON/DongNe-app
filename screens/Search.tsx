@@ -41,7 +41,7 @@ const Input = styled.TextInput`
   border-radius: 7px;
 `;
 const Search = ({ navigation }: any) => {
-  const numColumns = 4;
+  const numColumns = 3;
   const { width } = useWindowDimensions();
   const { setValue, register, watch, handleSubmit, getValues } = useForm();
   const [startQueryFn, { loading, data, called }] = useLazyQuery(SEARCH_POSTS);
@@ -76,10 +76,16 @@ const Search = ({ navigation }: any) => {
     });
   }, []);
   const renderItem = ({ item: post }: any) => (
-    <TouchableOpacity>
+    <TouchableOpacity
+      onPress={() =>
+        navigation.navigate("Photo", {
+          postId: post.id,
+        })
+      }
+    >
       <Image
         source={{ uri: post.file }}
-        style={{ width: width / numColumns, height: 100 }}
+        style={{ width: width / numColumns, height: 150 }}
       />
     </TouchableOpacity>
   );

@@ -82,7 +82,15 @@ const ExtraContainer = styled.View`
   padding: 10px;
 `;
 
-const Post = ({ id, user, caption, file, isLiked, likes }: PostProps) => {
+const Post = ({
+  id,
+  user,
+  caption,
+  file,
+  isLiked,
+  likes,
+  comments,
+}: PostProps) => {
   const navigation: NativeStackNavigationProp<any> = useNavigation();
   const { width, height } = useWindowDimensions();
   const [imageHeight, setImageHeight] = useState(height - 450);
@@ -153,7 +161,13 @@ const Post = ({ id, user, caption, file, isLiked, likes }: PostProps) => {
               size={22}
             />
           </Action>
-          <Action onPress={() => navigation.navigate("Comments")}>
+          <Action
+            onPress={() =>
+              navigation.navigate("Comments", {
+                postId: id,
+              })
+            }
+          >
             <Ionicons name="chatbubble-outline" size={22} />
           </Action>
         </Actions>

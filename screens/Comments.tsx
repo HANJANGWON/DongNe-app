@@ -1,12 +1,16 @@
 import React from "react";
 import { Text, View } from "react-native";
 
-const Comments = () => {
+export default function Comments() {
   return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Text>Likes</Text>
+    <View
+      style={{
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      <Text style={{ color: "white" }}>Comments</Text>
     </View>
   );
-};
-
-export default Comments;
+}
