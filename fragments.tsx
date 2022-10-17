@@ -33,3 +33,19 @@ export const USER_FRAGMENT = gql`
     isMe
   }
 `;
+
+export const FEED_POST = gql`
+  fragment FeedPost on Post {
+    ...PostFragment
+    user {
+      id
+      username
+      fullName
+      avatar
+    }
+    caption
+    createdAt
+    isMine
+  }
+  ${POST_FRAGMENT}
+`;

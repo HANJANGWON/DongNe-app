@@ -148,7 +148,7 @@ const Post = ({
         resizeMode="cover"
         style={{
           width,
-          height: imageHeight,
+          height: 450,
         }}
         source={{ uri: file }}
       />
