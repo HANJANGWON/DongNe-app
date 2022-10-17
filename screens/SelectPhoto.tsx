@@ -85,7 +85,7 @@ const SelectPhoto = ({ navigation }: any) => {
       />
       <IconContainer>
         {chosenPhoto === photo.uri ? (
-          <Ionicons name="checkmark-circle" size={18} color="lightskyblue" />
+          <Ionicons name="checkmark-circle" size={18} color="dodgerblue" />
         ) : null}
       </IconContainer>
     </ImageContainer>

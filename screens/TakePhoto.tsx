@@ -1,11 +1,12 @@
 import { Camera } from "expo-camera";
 import { CameraType, FlashMode } from "expo-camera/build/Camera.types";
 import { Ionicons } from "@expo/vector-icons";
-import React, { useEffect, useState } from "react";
-import { TouchableOpacity } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { Alert, Image, Text, TouchableOpacity } from "react-native";
 import Slider from "@react-native-community/slider";
 import styled from "styled-components/native";
 import { StatusBar } from "expo-status-bar";
+import * as MediaLibrary from "expo-media-library";
 
 const Container = styled.View`
   background-color: black;
@@ -44,7 +45,23 @@ const CloseButton = styled.TouchableOpacity`
   left: 20px;
 `;
 
+const PhotoActions = styled(Actions)`
+  flex-direction: row;
+`;
+
+const PhotoAction = styled.TouchableOpacity`
+  background-color: white;
+  padding: 10px 25px;
+  border-radius: 4px;
+`;
+const PhotoActionText = styled.Text`
+  font-weight: 600;
+`;
+
 const TakePhoto = ({ navigation }: any) => {
+  const cameraRef = useRef<Camera | null>();
+  const [takenPhoto, setTakenPhoto] = useState("");
+  const [cameraReady, setCameraReady] = useState(false);
   const [ok, setOk] = useState(false);
   const [flashMode, setFlashMode] = useState<FlashMode>(FlashMode.off);
   const [zoom, setZoom] = useState(0);
@@ -74,49 +91,98 @@ const TakePhoto = ({ navigation }: any) => {
       setFlashMode(FlashMode.off);
     }
   };
+  const goToUpload = async (save: any) => {
+    if (save) {
+      await MediaLibrary.saveToLibraryAsync(takenPhoto);
+    }
+    console.log("Will upload", takenPhoto);
+  };
+  const onUpload = () => {
+    Alert.alert("Save photo?", "Save photo & upload or just upload", [
+      {
+        text: "저장 후 업로드",
+        onPress: () => goToUpload(true),
+      },
+      {
+        text: "업로드",
+        onPress: () => goToUpload(false),
+      },
+    ]);
+  };
+  const onCameraReady = () => setCameraReady(true);
+  const takePhoto = async () => {
+    // 카메라의 존재여부를 확인하는 코드
+    if (cameraRef.current && cameraReady) {
+      const { uri } = await cameraRef.current.takePictureAsync({
+        quality: 1,
+        exif: true,
+      });
+      setTakenPhoto(uri);
+    }
+  };
+  const onDismiss = () => setTakenPhoto("");
   return (
     <Container>
       <StatusBar hidden={true} />
-      <Camera
-        type={cameraType}
-        style={{ flex: 1 }}
-        zoom={zoom}
-        flashMode={flashMode}
-      >
-        <CloseButton onPress={() => navigation.navigate("Tabs")}>
-          <Ionicons name="close" color="white" size={30} />
-        </CloseButton>
-      </Camera>
-      <Actions>
-        <SliderContainer>
-          <Slider
-            style={{ width: 200, height: 40 }}
-            minimumValue={0}
-            maximumValue={1}
-            minimumTrackTintColor="#FFFFFF"
-            maximumTrackTintColor="rgba(255, 255, 255, 0.5)"
-            onValueChange={onZoomValueChange}
-          />
-        </SliderContainer>
-        <ButtonsContainer>
-          <TakePhotoBtn />
-          <ActionsContainer>
-            <TouchableOpacity
-              onPress={onFlashChange}
-              style={{ marginRight: 30 }}
-            >
-              <Ionicons
-                size={40}
-                color="white"
-                name={flashMode === FlashMode.on ? "flash-off" : "flash"}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={onCameraSwitch}>
-              <Ionicons size={40} color="white" name={"camera-reverse"} />
-            </TouchableOpacity>
-          </ActionsContainer>
-        </ButtonsContainer>
-      </Actions>
+      {takenPhoto === "" ? (
+        <Camera
+          type={cameraType}
+          style={{ flex: 1 }}
+          zoom={zoom}
+          flashMode={flashMode}
+          ref={(camera) => {
+            cameraRef.current = camera;
+          }}
+          onCameraReady={onCameraReady}
+        >
+          <CloseButton onPress={() => navigation.navigate("Tabs")}>
+            <Ionicons name="close" color="white" size={30} />
+          </CloseButton>
+        </Camera>
+      ) : (
+        <Image source={{ uri: takenPhoto }} style={{ flex: 1 }} />
+      )}
+      {takenPhoto === "" ? (
+        <Actions>
+          <SliderContainer>
+            <Slider
+              style={{ width: 200, height: 40 }}
+              minimumValue={0}
+              maximumValue={1}
+              minimumTrackTintColor="#FFFFFF"
+              maximumTrackTintColor="rgba(255, 255, 255, 0.5)"
+              onValueChange={onZoomValueChange}
+            />
+          </SliderContainer>
+          <ButtonsContainer>
+            <TakePhotoBtn onPress={takePhoto} />
+            <ActionsContainer>
+              <TouchableOpacity
+                onPress={onFlashChange}
+                style={{ marginRight: 30 }}
+              >
+                <Ionicons
+                  size={40}
+                  color="white"
+                  name={flashMode === FlashMode.on ? "flash-off" : "flash"}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={onCameraSwitch}>
+                <Ionicons size={40} color="white" name={"camera-reverse"} />
+              </TouchableOpacity>
+            </ActionsContainer>
+          </ButtonsContainer>
+        </Actions>
+      ) : (
+        <PhotoActions>
+          <PhotoAction onPress={onDismiss}>
+            <PhotoActionText>취소</PhotoActionText>
+          </PhotoAction>
+          <PhotoAction onPress={onUpload}>
+            <PhotoActionText>업로드</PhotoActionText>
+          </PhotoAction>
+        </PhotoActions>
+      )}
     </Container>
   );
 };
