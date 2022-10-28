@@ -4,6 +4,7 @@ import TabsNav from "./TabsNav";
 import UploadNav from "./UploadNav";
 import UploadForm from "../screens/UploadForm";
 import { Ionicons } from "@expo/vector-icons";
+import MessagesNav from "./MessageNav";
 
 const Stack = createNativeStackNavigator();
 const LoggedInNav = () => {
@@ -24,12 +25,14 @@ const LoggedInNav = () => {
         options={{
           headerTintColor: "black",
           headerBackTitleVisible: false,
-          headerLeft: ({ tintColor }: any) => (
-            <Ionicons color={tintColor} name="close" size={28} />
-          ),
           title: "Upload",
         }}
         component={UploadForm}
+      />
+      <Stack.Screen
+        name="Messages"
+        options={{ headerShown: false }}
+        component={MessagesNav}
       />
     </Stack.Navigator>
   );

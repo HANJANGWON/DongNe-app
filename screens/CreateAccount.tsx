@@ -28,7 +28,6 @@ const CREATE_ACCOUNT_MUTATION = gql`
 const CreateAccount = ({ navigation }: any) => {
   const { register, handleSubmit, setValue, getValues } = useForm();
   const onCompleted = (data: any) => {
-    console.log(data);
     const {
       createAccount: { ok },
     } = data;

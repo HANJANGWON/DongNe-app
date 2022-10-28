@@ -28,11 +28,11 @@ export const logUserOut = async () => {
 };
 
 const httpLink = createHttpLink({
-  uri: "https://stale-flies-smash-211-248-105-54.loca.lt/graphql",
+  uri: "https://cuddly-knives-train-211-248-105-54.loca.lt/graphql",
 });
 
 const uploadHttpLink = createUploadLink({
-  uri: "https://stale-flies-smash-211-248-105-54.loca.lt/graphql",
+  uri: "https://cuddly-knives-train-211-248-105-54.loca.lt/graphql",
 });
 
 const authLink = setContext((_, { headers }) => {
