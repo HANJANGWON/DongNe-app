@@ -8,6 +8,7 @@ import useMe from "../hooks/useMe";
 const Tabs = createBottomTabNavigator();
 const TabsNav = () => {
   const { data } = useMe();
+
   return (
     <Tabs.Navigator
       screenOptions={{
@@ -69,6 +70,7 @@ const TabsNav = () => {
       >
         {() => <StackNavFactory screenName="Notifications" />}
       </Tabs.Screen>
+
       <Tabs.Screen
         name="TabMe"
         options={{
